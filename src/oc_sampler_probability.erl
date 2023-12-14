@@ -33,7 +33,7 @@
 
 init(Opts) ->
     case proplists:get_value(probability, Opts, ?DEFAULT_PROBABILITY) of
-        P when P =:= 0.0 ->
+        P when P =:= +0.0 orelse P =:= -0.0 ->
             IdUpperBound = 0;
         P when P =:= 1.0 ->
             IdUpperBound = ?MAX_VALUE;
