@@ -59,7 +59,7 @@ encode_tracestate(#span_ctx{tracestate=#tracestate{entries=Entries}}) ->
     StateHeaderValue = lists:join($,, [[Key, $=, Value] || {Key, Value} <- Entries]),
     [{?STATE_HEADER_KEY, StateHeaderValue}].
 
--spec from_headers(list() | map()) -> maybe(opencensus:span_ctx()).
+-spec from_headers(list() | map()) -> tmaybe(opencensus:span_ctx()).
 from_headers(Headers) when is_map(Headers) ->
     decode(maps:get(?HEADER_KEY, Headers, undefined));
 from_headers(Headers) when is_list(Headers) ->

@@ -30,7 +30,7 @@
 -define(SPAN_KIND_SERVER, 'SERVER').
 -define(SPAN_KIND_CLIENT, 'CLIENT').
 
--type maybe(T) :: T | undefined.
+-type tmaybe(T) :: T | undefined.
 
 -record(span_ctx, {
           %% 128 bit int trace id

@@ -93,7 +93,7 @@
 %% Replaces the tags in the current context.
 %% @end
 %%--------------------------------------------------------------------
--spec with_tags(opencensus:tags()) -> maybe(opencensus:tags()).
+-spec with_tags(opencensus:tags()) -> tmaybe(opencensus:tags()).
 with_tags(Map) ->
     put(?TAG_CTX, Map).
 
@@ -111,7 +111,7 @@ update_tags(Map) ->
 %% Replaces the span in the current context.
 %% @end
 %%--------------------------------------------------------------------
--spec with_span_ctx(opencensus:span_ctx()) -> maybe(opencensus:span_ctx()).
+-spec with_span_ctx(opencensus:span_ctx()) -> tmaybe(opencensus:span_ctx()).
 with_span_ctx(SpanCtx) ->
     ?SET_LOG_METADATA(SpanCtx),
     put(?SPAN_CTX, SpanCtx).
@@ -121,7 +121,7 @@ with_span_ctx(SpanCtx) ->
 %% Starts a new span as a child of the current span and replaces it.
 %% @end
 %%--------------------------------------------------------------------
--spec with_child_span(unicode:unicode_binary()) -> opencensus:maybe(opencensus:span_ctx()).
+-spec with_child_span(unicode:unicode_binary()) -> opencensus:tmaybe(opencensus:span_ctx()).
 with_child_span(Name) ->
     with_span_ctx(oc_trace:start_span(Name, current_span_ctx(), #{})).
 
@@ -131,7 +131,7 @@ with_child_span(Name) ->
 %% and replaces it.
 %% @end
 %%--------------------------------------------------------------------
--spec with_child_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:maybe(opencensus:span_ctx()).
+-spec with_child_span(unicode:unicode_binary(), opencensus:attributes()) -> opencensus:tmaybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes) ->
     with_span_ctx(oc_trace:start_span(Name, current_span_ctx(), #{attributes => Attributes})).
 
@@ -142,7 +142,7 @@ with_child_span(Name, Attributes) ->
 %% and resetting the current span context after the function finishes.
 %% @end
 %%--------------------------------------------------------------------
--spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> maybe(opencensus:span_ctx()).
+-spec with_child_span(unicode:unicode_binary(), opencensus:attributes(), fun()) -> tmaybe(opencensus:span_ctx()).
 with_child_span(Name, Attributes, Fun) ->
     CurrentSpanCtx = current_span_ctx(),
     NewSpanCtx = oc_trace:start_span(Name, CurrentSpanCtx, #{attributes => Attributes}),
@@ -153,7 +153,7 @@ with_child_span(Name, Attributes, Fun) ->
         with_span_ctx(CurrentSpanCtx)
     end.
 
--spec current_span_ctx() -> maybe(opencensus:span_ctx()).
+-spec current_span_ctx() -> tmaybe(opencensus:span_ctx()).
 current_span_ctx() ->
     get(?SPAN_CTX).
 

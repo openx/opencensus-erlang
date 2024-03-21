@@ -30,7 +30,7 @@
 -define(SPAN_ID_FIELD_NUM, 1).
 -define(TRACE_OPTIONS_FIELD_NUM, 2).
 
--spec encode(opencensus:span_ctx()) -> maybe(binary()).
+-spec encode(opencensus:span_ctx()) -> tmaybe(binary()).
 encode(#span_ctx{trace_id=TraceId,
                  span_id=SpanId}) when TraceId =:= 0
                                        ; SpanId =:= 0 ->
@@ -41,7 +41,7 @@ encode(#span_ctx{trace_id=TraceId,
     Options = case TraceOptions band 1 of 1 -> <<1:8>>; _ -> <<0:8>> end,
     <<?VERSION:8, 0:8, TraceId:128, 1:8, SpanId:64, 2:8, Options/binary>>.
 
--spec decode(binary()) -> maybe(opencensus:span_ctx()).
+-spec decode(binary()) -> tmaybe(opencensus:span_ctx()).
 decode(<<0:8/integer, VersionFormat/binary>>) ->
     decode_v0(VersionFormat, #span_ctx{}).
 

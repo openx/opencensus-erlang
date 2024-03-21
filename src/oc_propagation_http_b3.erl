@@ -29,7 +29,7 @@
 
 -define(IS_SAMPLED(S), S =:= "1" orelse S =:= <<"1">> orelse S =:= "true" orelse S =:= <<"true">>).
 
--spec to_headers(opencensus:span_ctx()) -> maybe(list()).
+-spec to_headers(opencensus:span_ctx()) -> tmaybe(list()).
 to_headers(#span_ctx{trace_id=TraceId,
                      span_id=SpanId}) when TraceId =:= 0
                                            ; SpanId =:= 0 ->
@@ -47,7 +47,7 @@ to_headers(#span_ctx{trace_id=TraceId,
 to_headers(undefined) ->
     [].
 
--spec from_headers(list() | map()) -> maybe(opencensus:span_ctx()).
+-spec from_headers(list() | map()) -> tmaybe(opencensus:span_ctx()).
 from_headers(Headers) when is_map(Headers) ->
     from_headers(maps:to_list(Headers));
 from_headers(Headers) when is_list(Headers) ->

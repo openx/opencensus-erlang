@@ -27,7 +27,7 @@
 field_name() ->
     <<"tracestate">>.
 
--spec encode(oc_tags:tags()) -> maybe(iodata()).
+-spec encode(oc_tags:tags()) -> tmaybe(iodata()).
 encode(Tags) when map_size(Tags) =:= 0 ->
     <<"0">>;
 encode(Tags) ->

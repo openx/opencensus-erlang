@@ -73,13 +73,13 @@ from_ctx(Ctx) ->
 %% Return the current span context in a `Ctx' or `undefined'.
 %% @end
 %%--------------------------------------------------------------------
--spec current_span_ctx(ctx:t()) -> maybe(opencensus:span_ctx()).
+-spec current_span_ctx(ctx:t()) -> tmaybe(opencensus:span_ctx()).
 current_span_ctx(Ctx) ->
     ctx:get(Ctx, ?SPAN_CTX, undefined).
 
 
--spec parent_span_ctx(maybe(opencensus:span_ctx() | opencensus:span())) ->
-                             maybe(opencensus:span_ctx()).
+-spec parent_span_ctx(tmaybe(opencensus:span_ctx() | opencensus:span())) ->
+                             tmaybe(opencensus:span_ctx()).
 parent_span_ctx(#span_ctx{span_id=SpanId}) ->
     parent_span_ctx_for_span_id(SpanId);
 parent_span_ctx(Span) ->
@@ -199,7 +199,7 @@ update_trace_options(should_sample, #span_ctx{trace_id=TraceId,
 %% Finish a span, setting the end_time.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span(maybe(opencensus:span_ctx())) -> boolean().
+-spec finish_span(tmaybe(opencensus:span_ctx())) -> boolean().
 finish_span(SpanCtx=#span_ctx{span_id=SpanId,
                               trace_options=TraceOptions}) when ?IS_ENABLED(TraceOptions) ->
     case ets:take(?SPAN_TAB, SpanId) of
@@ -216,7 +216,7 @@ finish_span(_) ->
 %% Returns true if trace is enabled.
 %% @end
 %%--------------------------------------------------------------------
--spec is_enabled(maybe(opencensus:span_ctx())) -> boolean().
+-spec is_enabled(tmaybe(opencensus:span_ctx())) -> boolean().
 is_enabled(undefined) ->
     false;
 is_enabled(#span_ctx{trace_options=TraceOptions}) ->
@@ -229,7 +229,7 @@ is_enabled(#span_ctx{trace_options=TraceOptions}) ->
 %% Returns true if the data was successfully updated.
 %% @end
 %%--------------------------------------------------------------------
--spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value(), maybe(opencensus:span_ctx())) -> boolean().
+-spec put_attribute(unicode:unicode_binary(), opencensus:attribute_value(), tmaybe(opencensus:span_ctx())) -> boolean().
 put_attribute(Key, Value, SpanCtx) ->
     lookup_and_replace(SpanCtx, fun(SpanData) ->
                                         oc_span:put_attribute(Key, Value, SpanData)
@@ -243,7 +243,7 @@ put_attribute(Key, Value, SpanCtx) ->
 %% @end
 %%--------------------------------------------------------------------
 -spec put_attributes(#{unicode:unicode_binary() => opencensus:attribute_value()},
-                     maybe(opencensus:span_ctx())) -> boolean().
+                     tmaybe(opencensus:span_ctx())) -> boolean().
 put_attributes(NewAttributes, SpanCtx) ->
     lookup_and_replace(SpanCtx, fun(SpanData) ->
                                         oc_span:put_attributes(NewAttributes, SpanData)
@@ -256,12 +256,12 @@ put_attributes(NewAttributes, SpanCtx) ->
 %% @end
 %%--------------------------------------------------------------------
 -spec add_time_event(opencensus:annotation() | opencensus:message_event(),
-                     maybe(opencensus:span_ctx())) -> boolean().
+                     tmaybe(opencensus:span_ctx())) -> boolean().
 add_time_event(TimeEvent, Span) ->
     add_time_event(wts:timestamp(), TimeEvent, Span).
 
 -spec add_time_event(wts:timestamp(), opencensus:annotation() | opencensus:message_event(),
-                     maybe(opencensus:span_ctx())) -> boolean().
+                     tmaybe(opencensus:span_ctx())) -> boolean().
 add_time_event(Timestamp, TimeEvent, SpanCtx) ->
     lookup_and_replace(SpanCtx, fun(SpanData) ->
                                         oc_span:add_time_event(Timestamp, TimeEvent, SpanData)
@@ -294,7 +294,7 @@ message_event(MessageEventType, Id, UncompressedSize, CompressedSize) ->
 %% Set Status. Returns true if the data was successfully updated.
 %% @end
 %%--------------------------------------------------------------------
--spec set_status(integer(), unicode:unicode_binary(), maybe(opencensus:span_ctx()))-> boolean().
+-spec set_status(integer(), unicode:unicode_binary(), tmaybe(opencensus:span_ctx()))-> boolean().
 set_status(Code, Message, #span_ctx{span_id=SpanId,
                                     trace_options=TraceOptions}) when ?IS_ENABLED(TraceOptions) ->
     ets:update_element(?SPAN_TAB, SpanId, [{#span.status, #status{code=Code,
@@ -309,7 +309,7 @@ set_status(_Code, _Message, _Span) ->
 %% data was successfully updated.
 %% @end
 %%--------------------------------------------------------------------
--spec add_link(opencensus:link(), maybe(opencensus:span_ctx())) -> boolean().
+-spec add_link(opencensus:link(), tmaybe(opencensus:span_ctx())) -> boolean().
 add_link(Link, SpanCtx) ->
     lookup_and_replace(SpanCtx, fun(SpanData) ->
                                         oc_span:add_link(Link, SpanData)

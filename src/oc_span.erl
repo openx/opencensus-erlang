@@ -41,7 +41,7 @@
 %% Finish a span, setting the end_time and sending to the reporter.
 %% @end
 %%--------------------------------------------------------------------
--spec finish_span(opencensus:span_ctx(), maybe(opencensus:span())) -> true.
+-spec finish_span(opencensus:span_ctx(), tmaybe(opencensus:span())) -> true.
 finish_span(#span_ctx{tracestate=Tracestate}, Span=#span{}) ->
     EndTime = wts:timestamp(),
     %% update tracestate to what the context has when finished
@@ -59,7 +59,7 @@ finish_span(_, _) ->
 %%--------------------------------------------------------------------
 -spec put_attribute(Key, Value, Span) -> Span when Key   :: unicode:unicode_binary(),
                                                    Value :: opencensus:attribute_value(),
-                                                   Span  :: maybe(opencensus:span()).
+                                                   Span  :: tmaybe(opencensus:span()).
 put_attribute(Key, Value, Span=#span{attributes=Attributes}) ->
     Span#span{attributes=maps:put(Key, Value, Attributes)};
 put_attribute(_, _, undefined) ->
@@ -73,7 +73,7 @@ put_attribute(_, _, undefined) ->
 %%--------------------------------------------------------------------
 -spec put_attributes(Attributes, Span) -> Span when Attributes :: #{unicode:unicode_binary() =>
                                                                         opencensus:attribute_value()},
-                                                    Span       :: maybe(opencensus:span()).
+                                                    Span       :: tmaybe(opencensus:span()).
 put_attributes(NewAttributes, Span=#span{attributes=Attributes}) ->
     Span#span{attributes=maps:merge(Attributes, NewAttributes)};
 put_attributes(_, undefined) ->
@@ -86,7 +86,7 @@ put_attributes(_, undefined) ->
 %% @end
 %%--------------------------------------------------------------------
 -spec add_time_event(TimeEvent, Span) -> Span when TimeEvent :: opencensus:annotation() | opencensus:message_event(),
-                                                   Span      :: maybe(opencensus:span()).
+                                                   Span      :: tmaybe(opencensus:span()).
 add_time_event(TimeEvent, Span) ->
     add_time_event(wts:timestamp(), TimeEvent, Span).
 
@@ -131,7 +131,7 @@ message_event(MessageEventType, Id, UncompressedSize, CompressedSize) ->
 %%--------------------------------------------------------------------
 -spec set_status(Code, Message, Span) -> Span when Code    :: integer(),
                                                    Message :: unicode:unicode_binary(),
-                                                   Span    :: maybe(opencensus:span()).
+                                                   Span    :: tmaybe(opencensus:span()).
 set_status(Code, Message, Span=#span{}) ->
     Span#span{status=#status{code=Code,
                              message=Message}};
@@ -145,7 +145,7 @@ set_status(_, _, undefined) ->
 %% @end
 %%--------------------------------------------------------------------
 -spec add_link(Link, Span) -> Span when Link :: opencensus:link(),
-                                        Span :: maybe(opencensus:span()).
+                                        Span :: tmaybe(opencensus:span()).
 add_link(Link, Span=#span{links=Links}) ->
     Span#span{links=[Link | Links]};
 add_link(_, undefined) ->

@@ -42,7 +42,7 @@
 -type entries() :: [entry()].
 
 %% create tracestate from parent
--spec new(opencensus:tracestate(), list()) -> maybe(opencensus:tracestate()).
+-spec new(opencensus:tracestate(), list()) -> tmaybe(opencensus:tracestate()).
 new(undefined, []) ->
     undefined;
 new(undefined, Entries) ->
@@ -72,7 +72,7 @@ new(#tracestate{entries=ParentEntries}, Entries) ->
 remove(Key, Entries) ->
     lists:keydelete(Key, 1, Entries).
 
--spec add(maybe(opencensus:tracestate()), entries()) -> opencensus:tracestate() | {error, term()}.
+-spec add(tmaybe(opencensus:tracestate()), entries()) -> opencensus:tracestate() | {error, term()}.
 add(undefined, Entries) ->
     add(#tracestate{entries=[]}, Entries);
 add(Tracestate=#tracestate{entries=CurrentEntries0}, Entries) ->
